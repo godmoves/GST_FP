@@ -45,7 +45,7 @@ _, _, refractive_index_dict = decode(X_init)
 
 idx = np.arange(1500, 1605, 5)
 real_data = [np.real(refractive_index_dict[x]) for x in idx]
-real_part, real_model = quadratic_regression(idx, real_data)4z
+real_part, real_model = quadratic_regression(idx, real_data)
 imag_data = [np.imag(refractive_index_dict[x]) for x in idx]
 imag_part, imag_model = quadratic_regression(idx, imag_data)
 
