@@ -27,13 +27,14 @@ is_regression = input("Start the regression process? [y/N] ")
 if (is_regression == 'y'):
 	# The regression process
 	es = cma.CMAEvolutionStrategy(X_init, 1e-2, {'maxiter':20, 'popsize':16})
-	pool = mp.Pool(4)
-	while not es.stop():
-		X = es.ask()
-		f_values = pool.map_async(error, X).get()
-		es.tell(X, f_values)
-		es.disp()
-		es.logger.add()
+	es.optimize(error)
+	# pool = mp.Pool(4)
+	# while not es.stop():
+	# 	X = es.ask()
+	# 	f_values = pool.map_async(error, X).get()
+	# 	es.tell(X, f_values)
+	# 	es.disp()
+	# 	es.logger.add()
 	# es.result_pretty()
 	X_init = es.result[5]
 else:
@@ -44,11 +45,15 @@ _, _, refractive_index_dict = decode(X_init)
 
 idx = np.arange(1500, 1605, 5)
 real_data = [np.real(refractive_index_dict[x]) for x in idx]
-real_part, model = quadratic_regression(idx, real_data)
-print('Real part at 1500 nm:', model.predict(1550)[0][0])
+real_part, real_model = quadratic_regression(idx, real_data)4z
 imag_data = [np.imag(refractive_index_dict[x]) for x in idx]
-imag_part, model = quadratic_regression(idx, imag_data)
-print('Imag part at 1500 nm:', model.predict(1550)[0][0])
+imag_part, imag_model = quadratic_regression(idx, imag_data)
+
+f = open("result.csv", "w")
+print("wavelength     n      k", file=f)
+for i in range(1500, 1605, 5):
+	print(i, real_model.predict(i)[0][0], imag_model.predict(i)[0][0], file=f)
+
 print("The results are saved in local folder")
 
 refractive_index_plot(data_type, refractive_index_dict, real_part, imag_part, data_name)

@@ -72,6 +72,7 @@ def data_import(dataname, transfer=True):
 	newdata = Data()
 	newdata.wavelength = np.array(data.wavelength)
 	newdata.loss = np.array(data.loss)
+	print("%d data point(s) found" % len(newdata.loss))
 	return newdata
 
 def data_plot(data, title='Experimental Data', label=None):
@@ -380,14 +381,14 @@ def choose_data_type():
 		User interface function
 	'''
 	data_path = input("Input the path to data file: ")
-	print("Using data: \033[1;32mdata/" + data_path + ".csv\033[0m")
+	print("Using data: data/" + data_path + ".csv")
 	if_transfer = input("Whether we use transfer: [y/N] ")
 	if (if_transfer == 'y'):
 		if_transfer = True
-		print("Transfer mode: \033[1;32mON\033[0m")
+		print("Transfer mode: ON")
 	else:
 		if_transfer = False
-		print("Transfer mode: \033[1;31mOFF\033[0m")
+		print("Transfer mode: OFF")
 	data = data_import(data_path, transfer=if_transfer)
 
 	data_type = input("Choose the data type: 1.AM 2.CR (Now we work on 1500-1600nm only) ")
@@ -397,11 +398,11 @@ def choose_data_type():
 		dt = "CR"
 	else:
 		raise ValueError("No such data type")
-	print("GST phase: \033[1;32m" + dt + "\033[0m")
+	print("GST phase: " + dt)
 	gst_thick = input("Input the thickness(nm) of gst layer: (Now we support 20nm and 80nm only) ")
 	if (gst_thick != "20" and gst_thick != "80"):
 		raise NotImplementedError("Now we support 20nm and 80nm only")
-	print("Thickness of GST layer: \033[1;32m%s\033[0m nm" % gst_thick)
+	print("Thickness of GST layer: %s nm" % gst_thick)
 	dt = dt + gst_thick
 	gst_thick = int(gst_thick)
 
