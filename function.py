@@ -278,7 +278,7 @@ def glass_err(data, phase=0, d=5e-4, ref_s=1.5076,
 
 	newdata.wavelength = data.wavelength
 	newdata.loss = glasserr
-	return (newdata, sae)
+	return sae
 
 def gst_err(data, phase, thickness, refractive_index_dict, figure=False):
 	'''
@@ -347,39 +347,57 @@ def refractive_index_plot(data, regression_data, realpart, imagpart, title):
 	ax2.legend(loc=1)
 	ax2.set_xlabel('wavelength')
 
-def code(phase, thickness, refractive_index_dict):
+def code(phase, thickness, refractive_index_dict, data_name):
 	'''
 		Encode the data to apply the algorithm
 		This function deal with wavelength 1500-1600 nm only
 	'''
 	# The range of wavelength is 1500-1600 nm
-	idx = np.arange(1495, 1610, 5)
-	X_len = 1 + 1 + 2 * 23
-	X_init = np.zeros(X_len)
-	X_init[0] = phase
-	X_init[1] = thickness / 10
-	X_init[2:25] = [(1-RAND_PERCENT) * np.real(refractive_index_dict[x]) + \
-		2*RAND_PERCENT * np.random.rand(1)[0] * np.real(refractive_index_dict[x]) for x in idx]
-	X_init[25:48] = [(1-RAND_PERCENT) * np.imag(refractive_index_dict[x]*100) + \
-		2*RAND_PERCENT * np.random.rand(1)[0] * np.imag(refractive_index_dict[x]*100) for x in idx]
-	return X_init
+	if (data_name == "GST"):
+		idx = np.arange(1495, 1610, 5)
+		X_len = 1 + 1 + 2 * 23
+		X_init = np.zeros(X_len)
+		X_init[0] = phase
+		X_init[1] = thickness / 10
+		X_init[2:25] = [(1-RAND_PERCENT) * np.real(refractive_index_dict[x]) + \
+			2*RAND_PERCENT * np.random.rand(1)[0] * np.real(refractive_index_dict[x]) for x in idx]
+		X_init[25:48] = [(1-RAND_PERCENT) * np.imag(refractive_index_dict[x]*100) + \
+			2*RAND_PERCENT * np.random.rand(1)[0] * np.imag(refractive_index_dict[x]*100) for x in idx]
+		return X_init
+	elif (data_name == "GLASS"):
+		X_len = 1 + 1 + 2
+		X_init = np.zeros(X_len)
+		X_init[0] = phase
+		X_init[1] = thickness * 1e3
+		X_init[2] = refractive_index_dict[0]
+		X_init[3] = refractive_index_dict[1]
+		return X_init
+	else:
+		raise ValueError("Code error data type")
 
-def decode(X):
+def decode(X, data_name):
 	'''
 		Decode the data back
 	'''
-	phase = X[0]
-	thickness = X[1] * 10
-	refractive_index_dict = {}
-	for i in range(23):
-		refractive_index_dict[1495+5*i] = \
-			X[2+i] + X[25+i] * 0.01j
-	return phase, thickness, refractive_index_dict
+	if (data_name == "GST"):
+		phase = X[0]
+		thickness = X[1] * 10
+		refractive_index_dict = {}
+		for i in range(23):
+			refractive_index_dict[1495+5*i] = \
+				X[2+i] + X[25+i] * 0.01j
+		return phase, thickness, refractive_index_dict
+	elif (data_name == "GLASS"):
+		phase = X[0]
+		thickness = X[1] * 1e-3
+		refractive_index_dict = np.zeros(2)
+		refractive_index_dict[0] = X[2]
+		refractive_index_dict[1] = X[3]
+		return phase, thickness, refractive_index_dict
+	else:
+		raise ValueError("Decode error data type")
 
-def choose_data_type():
-	'''
-		User interface function
-	'''
+def input_data_path():
 	data_path = input("Input the path to data file: ")
 	print("Using data: data/" + data_path + ".csv")
 	if_transfer = input("Whether we use transfer: [y/N] ")
@@ -390,7 +408,13 @@ def choose_data_type():
 		if_transfer = False
 		print("Transfer mode: OFF")
 	data = data_import(data_path, transfer=if_transfer)
+	return data
 
+def input_glass_info():
+	thickness = input("Input the thickness(mm) of glass: ")
+	return float(thickness)*1e-3
+
+def input_gst_info():
 	data_type = input("Choose the data type: 1.AM 2.CR (Now we work on 1500-1600nm only) ")
 	if (data_type == '1'):
 		dt = "AM"
@@ -402,12 +426,42 @@ def choose_data_type():
 	gst_thick = input("Input the thickness(nm) of gst layer: (Now we support 20nm and 80nm only) ")
 	if (gst_thick != "20" and gst_thick != "80"):
 		raise NotImplementedError("Now we support 20nm and 80nm only")
-	print("Thickness of GST layer: %s nm" % gst_thick)
 	dt = dt + gst_thick
 	gst_thick = int(gst_thick)
 
-	data_dict = {"AM20": AM_20, "CR20": CR_20, "CR80": CR_80}
-	data_type = data_dict[dt]
-	data_name = dt
-	return data, data_type, gst_thick, data_name
+	return dt, gst_thick
 
+
+def choose_data_type():
+	'''
+		User interface function
+	'''
+	material = input("The material to test: 1.glass 2.GST 3.others ")
+	if (material == '1'):
+		data = input_data_path()
+		data_type = [1.52909, 1.52769]
+		glass_thick = input_glass_info()
+		data_name = "GLASS"
+		return data, data_type, glass_thick, data_name
+	elif (material == '2'):
+		data = input_data_path()
+		dt, gst_thick = input_gst_info()
+		data_dict = {"AM20": AM_20, "CR20": CR_20, "CR80": CR_80}
+		data_type = data_dict[dt]
+		data_name = "GST"
+		return data, data_type, gst_thick, data_name
+	else:
+		raise NotImplementedError("Material we not support now")
+
+def error_with_type(X, data, data_name):
+	if (data_name == "GST"):
+		phase, thickness, refractive_index_dict = decode(X, data_name)
+		err = gst_err(data, phase, thickness, refractive_index_dict)
+		return err
+	elif (data_name == "GLASS"):
+		phase, thickness, refractive_index_dict = decode(X, data_name)
+		err = glass_err(data, phase, thickness, refractive_index_dict[0], 
+			refractive_index_dict[1])
+		return err
+	else:
+		raise NotImplementedError("Error type we not support now")
