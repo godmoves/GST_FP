@@ -398,9 +398,12 @@ def decode(X, data_name):
 		raise ValueError("Decode error data type")
 
 def input_data_path():
+	'''
+		Input data path
+	'''
 	data_path = input("Input the path to data file: ")
 	print("Using data: data/" + data_path + ".csv")
-	if_transfer = input("Whether we use transfer: [y/N] ")
+	if_transfer = input("Whether to use transfer: [y/N] ")
 	if (if_transfer == 'y'):
 		if_transfer = True
 		print("Transfer mode: ON")
@@ -411,11 +414,17 @@ def input_data_path():
 	return data
 
 def input_glass_info():
+	'''
+		Input information about glass
+	'''
 	thickness = input("Input the thickness(mm) of glass: ")
 	return float(thickness)*1e-3
 
 def input_gst_info():
-	data_type = input("Choose the data type: 1.AM 2.CR (Now we work on 1500-1600nm only) ")
+	'''
+		Input information about GST
+	'''
+	data_type = input("Choose the data type: 1.AM 2.CR (Now work on 1500-1600nm only) ")
 	if (data_type == '1'):
 		dt = "AM"
 	elif (data_type == '2'):
@@ -423,9 +432,9 @@ def input_gst_info():
 	else:
 		raise ValueError("No such data type")
 	print("GST phase: " + dt)
-	gst_thick = input("Input the thickness(nm) of gst layer: (Now we support 20nm and 80nm only) ")
+	gst_thick = input("Input the thickness(nm) of gst layer: (Now support 20nm and 80nm only) ")
 	if (gst_thick != "20" and gst_thick != "80"):
-		raise NotImplementedError("Now we support 20nm and 80nm only")
+		raise NotImplementedError("Now support 20nm and 80nm only")
 	dt = dt + gst_thick
 	gst_thick = int(gst_thick)
 
@@ -451,9 +460,12 @@ def choose_data_type():
 		data_name = "GST"
 		return data, data_type, gst_thick, data_name
 	else:
-		raise NotImplementedError("Material we not support now")
+		raise NotImplementedError("Material not support now")
 
 def error_with_type(X, data, data_name):
+	'''
+		Return error based on different data types
+	'''
 	if (data_name == "GST"):
 		phase, thickness, refractive_index_dict = decode(X, data_name)
 		err = gst_err(data, phase, thickness, refractive_index_dict)
@@ -464,4 +476,4 @@ def error_with_type(X, data, data_name):
 			refractive_index_dict[1])
 		return err
 	else:
-		raise NotImplementedError("Error type we not support now")
+		raise NotImplementedError("Error in type not support")

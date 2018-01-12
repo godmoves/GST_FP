@@ -19,11 +19,12 @@ First, type `python process.py` in cmd or terminal, and then input the informati
 The material to test: 1.glass 2.GST 3.others 1
 Input the path to data file: glass1
 Using data: data/glass1.csv
-Whether we use transfer: [y/N] y
+Whether to use transfer: [y/N] y
 Transfer mode: ON
 20001 data point(s) found
 Input the thickness(mm) of glass: 0.5
 Initial data error: 8789.89195737
 Start the regression process? [y/N] y
+
 ```
 
