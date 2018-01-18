@@ -1,4 +1,7 @@
 from __future__ import print_function
+
+from parameter import * 
+
 import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
@@ -14,39 +17,6 @@ from sklearn.linear_model import Ridge
 PI = 3.14159265
 RAND_PERCENT = 0.005 # Add some randomness to init the algorithm
 
-# Reference index
-AM_20 = {1495: 3.902+0.01866j, 1500: 3.8981+0.01713j, 1505: 3.8943+0.015668j,
-	1510: 3.8905+0.014273j, 1515: 3.8867+0.012946j, 1520: 3.8829+0.011686j,
-	1525: 3.8792+0.010492j, 1530: 3.8755+0.0093644j, 1535: 3.8718+0.0083028j,
-	1540: 3.8682+0.0073067j, 1545: 3.8646+0.0063759j, 1550: 3.8610+0.0055099j,
-	1555: 3.8575+0.0047085j, 1560: 3.8540+0.0039713j, 1565: 3.8505+0.003298j, 
-	1570: 3.8471+0.0026882j, 1575: 3.8437+0.0021416j, 1580: 3.8404+0.0016579j,
-	1585: 3.8371+0.0012367j, 1590: 3.8339+0.00087773j, 1595: 3.8307+0.00058064j,
-	1600: 3.8276+0.00034509j, 1605: 3.8246+0.00017075j, 1610: 3.8216+5.7272e-005j,	
-	1615: 3.8187+4.3221e-006j, 1620: 3.8159+0j, 1625: 3.8132+0j,
-	1630: 3.8106+0j, 1635: 3.8081+0j}
-
-CR_20 = {1495:6.0913+1.0095j, 1500: 6.09+0.99838j, 1505: 6.0886+0.98732j,
-	1510: 6.0871+0.97635j, 1515: 6.0856+0.96546j, 1520: 6.0841+0.95466j,	
-	1525: 6.0824+0.94394j, 1530: 6.0808+0.93330j, 1535: 6.0790+0.92275j,	
-	1540: 6.0773+0.91228j, 1545: 6.0754+0.90189j, 1550: 6.0735+0.89158j,	
-	1555: 6.0716+0.88136j, 1560: 6.0696+0.87121j, 1565: 6.0676+0.86115j,	
-	1570: 6.0655+0.85116j, 1575: 6.0634+0.84125j, 1580: 6.0612+0.83143j,	
-	1585: 6.0590+0.82168j, 1590: 6.0568+0.81201j, 1595: 6.0545+0.80241j,	
- 	1600: 6.0522+0.79290j, 1605: 6.0498+0.78346j, 1610: 6.0474+0.77410j,
-	1615: 6.0449+0.76481j, 1620: 6.0424+0.75560j, 1625: 6.0399+0.74646j,	
-	1630: 6.0373+0.73740j, 1635: 6.0347+0.72841j}
-
-CR_80 = {1495: 6.6066+1.2099j, 1500: 6.606+1.1999j,	1505: 6.6053+1.19j,
-	1510: 6.6046+1.1801j, 1515: 6.6039+1.1703j,	1520: 6.6031+1.1606j,	
-	1525: 6.6023+1.151j, 1530: 6.6014+1.1414j, 1535: 6.6005+1.1319j,
-	1540: 6.5996+1.1225j, 1545: 6.5987+1.1131j, 1550: 6.5977+1.1038j,
-	1555: 6.5966+1.0946j, 1560: 6.5956+1.0854j, 1565: 6.5945+1.0763j,
-	1570: 6.5934+1.0673j, 1575: 6.5922+1.0583j, 1580: 6.591+1.0495j,
-	1585: 6.5898+1.0406j, 1590: 6.5886+1.0319j, 1595: 6.5873+1.0232j,
-	1600: 6.586+1.0146j, 1605: 6.5847+1.006j, 1610: 6.5834+0.99749j,
-	1615: 6.582+0.98905j, 1620: 6.5806+0.98067j, 1625: 6.5791+0.97235j,
-	1630: 6.5777+0.9641j, 1635: 6.5762+0.9559j}
 
 class Data():
 	'''
@@ -94,28 +64,32 @@ def data_err(data1, data2):
 	print('Data MSE:', err)
 	return err
 
-def show_linear_line(X_parameters, Y_parameters, figure=False):
+def linear_regression(X_parameters, Y_parameters, figure=False):
 	'''
 		Create linear regression object
 	'''
 	X_parameters = np.array(X_parameters).reshape(-1, 1)
 	Y_parameters = np.array(Y_parameters).reshape(-1, 1)
+
 	regr = linear_model.LinearRegression()
 	regr.fit(X_parameters, Y_parameters)
 	Y_mean = np.mean(Y_parameters)
 	Y_predict = regr.predict(X_parameters)
+
 	ssr = np.sum((Y_predict - Y_mean) ** 2)
 	sst = np.sum((Y_parameters - Y_mean) ** 2)
 	predictions = {}
 	predictions['intercept'] = regr.intercept_[0]
 	predictions['coefficient'] = regr.coef_[0][0]
 	predictions['R2'] = ssr/sst
+
 	if(figure):
 		plt.title(predictions)
 		plt.ylabel('Wavelength(nm)')
 		plt.xlabel('Index')
 		plt.plot(X_parameters, Y_parameters, '.')
 		plt.plot(X_parameters, Y_predict,linewidth=2)
+
 	print(predictions)
 	return predictions
 
@@ -123,12 +97,13 @@ def quadratic_regression(X_parameters, Y_parameters):
 	'''
 		Create quadratic regression object
 	'''
-	Xi=np.array(X_parameters).reshape(-1, 1)
-	Yi=np.array(Y_parameters).reshape(-1, 1)
+	X_parameters=np.array(X_parameters).reshape(-1, 1)
+	Y_parameters=np.array(Y_parameters).reshape(-1, 1)
+
 	model = make_pipeline(PolynomialFeatures(2), Ridge())
-	model.fit(Xi, Yi)
-	y_plot = model.predict(Xi)
-	return(y_plot, model)
+	model.fit(X_parameters, Y_parameters)
+	Y_predict = model.predict(X_parameters)
+	return(Y_predict, model)
 
 def trans_matrix(ref, d, lbd):
 	'''
@@ -191,12 +166,13 @@ def glass_err(data, phase=0, d=5e-4, ref_s=1.5076,
 		M = trans_matrix(ref, d, lbd)
 		pre_loss = loss(M, 1.0, d, lbd)
 		glasserr.append(pre_loss)
+
 	if(figure):
 		plt.subplot(2, 1, 1)
 		plt.title("Regression & error")
 		plt.plot(data.wavelength, data.loss)
 		plt.plot(data.wavelength, glasserr)
-
+		
 		plt.subplot(2, 1, 2)
 		plt.plot(data.wavelength, (data.loss - glasserr) ** 2)
 	sae = np.sum(np.abs(data.loss-glasserr))
@@ -384,7 +360,7 @@ def choose_data_type():
 	elif (material == '2'):
 		data = input_data_path()
 		dt, gst_thick = input_gst_info()
-		data_dict = {"AM20": AM_20, "CR20": CR_20, "CR80": CR_80}
+		data_dict = {"AM20": GST_AM_20, "CR20": GST_CR_20, "CR80": GST_CR_80}
 		data_type = data_dict[dt]
 		data_name = "GST"
 		return data, data_type, gst_thick, data_name
