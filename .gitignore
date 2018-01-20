@@ -5,3 +5,4 @@ data3
 __pycache__
 *.pyc
 *.csv
+test.py

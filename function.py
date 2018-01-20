@@ -15,7 +15,8 @@ from sklearn.linear_model import Ridge
 
 # Define constant
 PI = 3.14159265
-RAND_PERCENT = 0.005 # Add some randomness to init the algorithm
+# Add some randomness to init the algorithm
+RAND_PERCENT = 0.005 
 
 
 class Data():
@@ -30,18 +31,19 @@ def data_import(dataname, transfer=True):
 	'''
 		Process the data of the second experiment
 	'''
-	# we read from the beginning of csv files, 
-	# so you need to delete the non numerical information manually
-	data = pd.read_csv('data/'+dataname+'.csv', \
-		names=['wavelength', 'loss', 'junkdata'])
 	# As the format of data differ from machines, we need do some tansferomation,
 	# the format we expect is loss < 0 and wavelength in nanometer.
 	if(transfer):
+		data = pd.read_csv(dataname+".csv", \
+			names=['wavelength', 'loss', 'junkdata'], skiprows=21)
 		data.loss = data.loss * -1
 		data.wavelength = data.wavelength * 1e9
+	else:
+		data = pd.read_csv(dataname+".csv", \
+			names=['wavelength', 'loss', 'junkdata'])
 	newdata = Data()
 	newdata.wavelength = np.array(data.wavelength)
-	newdata.loss = np.array(data.loss)
+	newdata.loss = np.array(data.loss)	
 	print("%d data point(s) found" % len(newdata.loss))
 	return newdata
 
@@ -127,7 +129,7 @@ def n_glass(lbd, start=1.52909, end=1.52769):
 
 def n_gst(lbd, refractive_index_dict):
 	'''
-		The refrective index of GST amorphous
+		The refrective index of GST
 	'''
 	t = np.floor((lbd - 1500) / 5)
 	t1 = int(1500 + 5 * t)
@@ -135,6 +137,12 @@ def n_gst(lbd, refractive_index_dict):
 	N = refractive_index_dict[t1] + \
 		(lbd-t1)/5*(refractive_index_dict[t2]-refractive_index_dict[t1])
 	return N
+
+def n_gete(lbd, refractive_index_dict):
+	return(n_gst(lbd, refractive_index_dict))
+
+def n_aist(lbd, refractive_index_dict):
+	return(n_gst(lbd, refractive_index_dict))
 
 def loss(M, ref, d, lbd):
 	'''
