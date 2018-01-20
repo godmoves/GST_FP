@@ -207,4 +207,3 @@ def decode(X, data_name):
 		raise ValueError("Decode error data type")
 
 	return phase, thickness, refractive_index_dict
-

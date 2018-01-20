@@ -78,3 +78,4 @@ def choose_data_type():
 		raise NotImplementedError("Material not support now")
 
 	return data, data_type, thick, data_name
+	

@@ -44,7 +44,6 @@ def data_plot(data, title='Experimental Data', label=None):
 	plt.xlabel('Wavelength(nm)')
 	plt.ylabel('Loss(dB)')
 	plt.plot(data.wavelength, data.loss, label=label)
-	plt.show()
 
 def quartic_regression(X_parameters, Y_parameters):
 	'''
@@ -60,7 +59,7 @@ def quartic_regression(X_parameters, Y_parameters):
 
 
 def refractive_index_plot(data, regression_data=None, real_part_smooth=None, 
-							imag_part_smooth=None, title="Material"):
+		imag_part_smooth=None, title="Material"):
 	'''
 		Plot refractive index of gst
 	'''
@@ -88,5 +87,3 @@ def refractive_index_plot(data, regression_data=None, real_part_smooth=None,
 	ax2.set_ylabel('k value')
 	ax2.legend(loc=1)
 	ax2.set_xlabel('wavelength')
-
-	plt.show()
