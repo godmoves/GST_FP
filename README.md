@@ -12,7 +12,7 @@ Code for gst_fp experiment
 Use `pip install -r requirements.txt` to install the dependencies you need.
 
 ## How to use
-Now we support two materials: glass & GST, improvements are coming soon :D  
+Now we support two materials: glass/GST/GeTe/AIST, improvements are coming soon :D  
 Here is an example to show how to use this program.  
 First, type `python process.py` in cmd or terminal, and then input the information required:  
 ```
@@ -27,6 +27,5 @@ GST phase: AM
 Input the thickness(nm) of gst layer: (Now support 20nm and 80nm only) 20
 Initial data error: 19820.4382976
 Start the regression process? [y/N] y
-
 ```
 
