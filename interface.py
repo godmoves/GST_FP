@@ -39,11 +39,11 @@ def input_gst_like_info():
         state = "CR"
     else:
         raise ValueError("No such data type")
-    print("GST phase: " + state)
-    gst_thick = input(
-        "Input the thickness(nm) of gst layer: (Now support 20nm and 80nm only) ")
-    if (gst_thick != "20" and gst_thick != "80"):
-        raise NotImplementedError("Now support 20nm and 80nm only")
+    print("Material phase: " + state)
+    gst_thick = input("Input the thickness(nm): ")
+    # Not sure it will work fine.
+    # if (gst_thick != "20" and gst_thick != "80"):
+    #     raise NotImplementedError("Now support 20nm and 80nm only")
     gst_thick = int(gst_thick)
     return state, gst_thick
 
@@ -56,28 +56,28 @@ def choose_data_type():
         "The material to test: 1.glass 2.GST 3.GeTe 4.AIST 5.others ")
     if (material == '1'):
         data = input_data_path()
-        data_type = [1.52909, 1.52769]
+        init_dict = [1.52909, 1.52769]
         thick = input_glass_info()
         data_name = "GLASS"
     elif (material == '2'):
         data = input_data_path()
         state, thick = input_gst_like_info()
         data_dict = {"AM20": GST_AM_20, "CR20": GST_CR_20, "CR80": GST_CR_80}
-        data_type = data_dict[state+str(thick)]
+        init_dict = data_dict[state+str(thick)]
         data_name = "GST"
     elif (material == "3"):
         data = input_data_path()
         state, thick = input_gst_like_info()
         data_dict = {"AM": GeTe_AM, "CR": GeTe_CR}
-        data_type = data_dict[state]
+        init_dict = data_dict[state]
         data_name = "GeTe"
     elif (material == "4"):
         data = input_data_path()
         state, thick = input_gst_like_info()
         data_dict = {"AM": AIST_AM, "CR": AIST_CR}
-        data_type = data_dict[state]
+        init_dict = data_dict[state]
         data_name = "AIST"
     else:
-        raise NotImplementedError("Material not support now")
+        raise NotImplementedError("Material not support now，we will work hard :)")
 
-    return data, data_type, thick, data_name
+    return data, init_dict, thick, data_name

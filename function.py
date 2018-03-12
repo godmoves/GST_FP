@@ -136,12 +136,11 @@ def error_with_type(X, data, data_name):
     '''
             Return error based on different data types
     '''
-    if (data_name == "GST"
-            or data_name == "GeTe"
-            or data_name == "AIST"):
-        phase, thickness, refractive_index_dict = decode(X, data_name)
-        err = gst_like_err(data, phase, thickness, refractive_index_dict)
-        return err
+    material_list = {"GST","AIST", "GeTe"}
+    if (data_name in material_list):
+            phase, thickness, refractive_index_dict = decode(X, data_name)
+            err = gst_like_err(data, phase, thickness, refractive_index_dict)
+            return err
     elif (data_name == "GLASS"):
         phase, thickness, refractive_index_dict = decode(X, data_name)
         err = glass_err(data, phase, thickness, refractive_index_dict[0],

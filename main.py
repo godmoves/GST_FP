@@ -7,14 +7,14 @@ from function import code, decode, error_with_type
 from datahelper import quartic_regression, refractive_index_plot
 
 
-data, data_type, thickness, data_name = choose_data_type()
+data, init_dict, thickness, data_name = choose_data_type()
 
 
 def error(X, data=data, data_name=data_name):
     return error_with_type(X, data, data_name)
 
 
-X_init = code(0, thickness, data_type, data_name)
+X_init = code(0, thickness, init_dict, data_name)
 
 print("Initial data error:", error(X_init))
 
@@ -38,7 +38,8 @@ else:
 print('Total error: %f' % error(X_init))
 _, thick, refractive_index_dict = decode(X_init, data_name)
 
-if (data_name == "GST"):
+material_list = {"GST","AIST", "GeTe"}
+if (data_name in material_list):
     idx = np.arange(1500, 1605, 5)
     real_data = [np.real(refractive_index_dict[x]) for x in idx]
     real_part, real_model = quartic_regression(idx, real_data)
@@ -53,7 +54,7 @@ if (data_name == "GST"):
         print(i, real_model.predict(i)[0][0], imag_model.predict(i)[0][0], file=f)
 
     print("The results are saved in local folder")
-    refractive_index_plot(data_type, refractive_index_dict,
+    refractive_index_plot(init_dict, refractive_index_dict,
                           real_part, imag_part, data_name)
     plt.show()
 elif (data_name == "GLASS"):
