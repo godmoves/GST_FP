@@ -1,6 +1,8 @@
 import multiprocessing as mp
 
 import cma
+import numpy as np
+import matplotlib.pyplot as plt
 
 from interface import choose_data_type
 from function import code, decode, error_with_type
@@ -38,7 +40,7 @@ else:
 print('Total error: %f' % error(X_init))
 _, thick, refractive_index_dict = decode(X_init, data_name)
 
-material_list = {"GST","AIST", "GeTe"}
+material_list = {"GST", "AIST", "GeTe"}
 if (data_name in material_list):
     idx = np.arange(1500, 1605, 5)
     real_data = [np.real(refractive_index_dict[x]) for x in idx]
@@ -51,7 +53,8 @@ if (data_name in material_list):
     print(data_name, file=f)
     print("wavelength     n      k", file=f)
     for i in range(1500, 1605, 5):
-        print(i, real_model.predict(i)[0][0], imag_model.predict(i)[0][0], file=f)
+        print(i, real_model.predict(i)[0][0],
+              imag_model.predict(i)[0][0], file=f)
 
     print("The results are saved in local folder")
     refractive_index_plot(init_dict, refractive_index_dict,

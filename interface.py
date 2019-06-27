@@ -4,7 +4,7 @@ from datahelper import data_import
 
 def input_data_path():
     '''
-            Input data path
+        Input data path
     '''
     data_path = input("Input the path to data file: ")
     print("Using data: " + data_path)
@@ -21,15 +21,15 @@ def input_data_path():
 
 def input_glass_info():
     '''
-            Input information about glass
+        Input information about glass
     '''
     thickness = input("Input the thickness(mm) of glass: ")
-    return float(thickness)*1e-3
+    return float(thickness) * 1e-3
 
 
 def input_gst_like_info():
     '''
-            Input information about GST
+        Input information about GST
     '''
     data_type = input(
         "Choose the data type: 1.AM 2.CR (Now work on 1500-1600nm only) ")
@@ -50,7 +50,7 @@ def input_gst_like_info():
 
 def choose_data_type():
     '''
-            User interface function
+        User interface function
     '''
     material = input(
         "The material to test: 1.glass 2.GST 3.GeTe 4.AIST 5.others ")
@@ -63,7 +63,7 @@ def choose_data_type():
         data = input_data_path()
         state, thick = input_gst_like_info()
         data_dict = {"AM20": GST_AM_20, "CR20": GST_CR_20, "CR80": GST_CR_80}
-        init_dict = data_dict[state+str(thick)]
+        init_dict = data_dict[state + str(thick)]
         data_name = "GST"
     elif (material == "3"):
         data = input_data_path()
@@ -78,6 +78,7 @@ def choose_data_type():
         init_dict = data_dict[state]
         data_name = "AIST"
     else:
-        raise NotImplementedError("Material not support now，we will work hard :)")
+        raise NotImplementedError(
+            "Material not support now，we will work hard :)")
 
     return data, init_dict, thick, data_name

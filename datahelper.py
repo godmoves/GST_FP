@@ -10,7 +10,7 @@ from sklearn.linear_model import Ridge
 
 class Data():
     '''
-            Define data type
+        Define data type
     '''
 
     def __init__(self):
@@ -20,7 +20,7 @@ class Data():
 
 def data_import(dataname, transfer=True):
     '''
-            Process the data of the second experiment
+        Process the data of the second experiment
     '''
     # As the format of data differ from machines, we need do some tansferomation,
     # the format we expect is loss < 0 and wavelength in nanometer.
@@ -41,7 +41,7 @@ def data_import(dataname, transfer=True):
 
 def data_plot(data, title='Experimental Data', label=None):
     '''
-            Plot the data
+        Plot the data
     '''
     # plt.figure(figsize=(11, 7))
     plt.title(title)
@@ -52,7 +52,7 @@ def data_plot(data, title='Experimental Data', label=None):
 
 def quartic_regression(X_parameters, Y_parameters):
     '''
-            Create quartic regression object
+        Create quartic regression object
     '''
     X_parameters = np.array(X_parameters).reshape(-1, 1)
     Y_parameters = np.array(Y_parameters).reshape(-1, 1)
@@ -66,7 +66,7 @@ def quartic_regression(X_parameters, Y_parameters):
 def refractive_index_plot(data, regression_data=None, real_part_smooth=None,
                           imag_part_smooth=None, title="Material"):
     '''
-            Plot refractive index of gst
+        Plot refractive index of gst
     '''
     # The range of wavelength is 1500-1600 nm
     idx = np.arange(1500, 1605, 5)
@@ -75,9 +75,10 @@ def refractive_index_plot(data, regression_data=None, real_part_smooth=None,
     # draw n & k in the same graph
     ax1 = fig.add_subplot(111)
     ax1.scatter(idx, [np.real(data[x]) for x in idx], label='n', color='black')
-    if not regression_data is None:
+    if regression_data is not None:
         ax1.plot(idx, [np.real(regression_data[x]) for x in idx], '--',
                  label='n', color='black', alpha=0.3)
+    if real_part_smooth is not None:
         ax1.plot(idx, real_part_smooth, color='black')
     ax1.set_ylabel('n value')
     ax1.legend(loc=2)
@@ -85,9 +86,10 @@ def refractive_index_plot(data, regression_data=None, real_part_smooth=None,
 
     ax2 = ax1.twinx()
     ax2.scatter(idx, [np.imag(data[x]) for x in idx], label='k', color='red')
-    if not regression_data is None:
+    if regression_data is not None:
         ax2.plot(idx, [np.imag(regression_data[x]) for x in idx], '--',
                  label='k', color='red', alpha=0.3)
+    if imag_part_smooth is not None:
         ax2.plot(idx, imag_part_smooth, color='red')
     ax2.set_ylabel('k value')
     ax2.legend(loc=1)
